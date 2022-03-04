@@ -20,7 +20,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        new GetExchangeRates().getRates();
+//        new GetExchangeRates().getCurrentRates();
+//        new GetExchangeRates().getSpecificRateConversion("USD");
+//        new GetExchangeRates().getHistoricExchangeRate("USD", "2020-10-01", "2022-03-04");
+
 
     }
 }
