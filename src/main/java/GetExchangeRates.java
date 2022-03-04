@@ -6,7 +6,9 @@ import java.net.URL;
 public class GetExchangeRates {
 
     public static void main(String[] args) {
-        new GetExchangeRates().getCurrentRates();
+//        new GetExchangeRates().getCurrentRates();
+//        new GetExchangeRates().getSpecificRateConversion("CNY");
+        new GetExchangeRates().getHistoricExchangeRate("DOP", "2020-10-01", "2020-10-04");
     }
 
     public void getCurrentRates() {
@@ -26,7 +28,7 @@ public class GetExchangeRates {
                 inputStream.close();
                 String responseNew = response.toString().substring(response.toString().indexOf("JPY"))
                         .replace(",", "\n")
-                        .replaceAll("[{}\"]","");
+                        .replaceAll("[{}\"]", "");
                 System.out.println("USD To:");
                 System.out.println(responseNew);
             } else {
@@ -54,7 +56,12 @@ public class GetExchangeRates {
                     response.append(readLine);
                 }
                 inputSteam.close();
-                System.out.println(response);
+                String responseNew = response.toString().substring(response.toString().indexOf(currency));
+//                String responseNew = response.toString().substring(response.toString().indexOf(currency, response.toString().indexOf(currency) + 1));
+//                        .replace(",", "\n")
+//                        .replaceAll("[{}\"]","");
+                System.out.println(currency + " To:");
+                System.out.println(responseNew);
             } else {
                 throw new Exception("Error in API Call");
             }
@@ -83,12 +90,25 @@ public class GetExchangeRates {
                     response.append(readLine);
                 }
                 inputStream.close();
-                System.out.println(response);
+                String responseNew;
+                if (currency.equals("AED")) {
+                    responseNew = response.toString().substring(response.toString().indexOf(currency, response.toString().indexOf(currency) + 1))
+                            .replace(",", "\n")
+                            .replaceAll("[{}\"]", "");
+                } else {
+                    responseNew = response.toString().substring(response.toString().indexOf("AED"))
+                            .replace(",", "\n")
+                            .replaceAll("[{}\"]", "");
+                }
+                System.out.println(currency + " To:");
+                System.out.println(responseNew);
+
+
             } else {
                 throw new Exception("Error in API Call");
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 }
