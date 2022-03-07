@@ -1,31 +1,21 @@
-import com.google.gson.annotations.Since;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Scanner;
 
 public class GetExchangeRates {
 
-    public static void main(String[] args) {
-//        new GetExchangeRates().getCurrentRates();
-        new GetExchangeRates().getSpecificRateConversion("CNY", "GTQ");
-//        new GetExchangeRates().getHistoricExchangeRate("DOP", "2020-10-01", "2020-10-04");
-//        new CurrencyDatabase().getCurrenciesNames();
-    }
-
-//    public Map<String, Double> convertListToMap(List<CurrencyDatabase> list) {
-//        Map<String, Double> map = list.stream().map(CurrencyDatabase, Function.identity());
-//
-//        return map;
+//    public static void main(String[] args) {
+////        new GetExchangeRates().getCurrentRates();
+//        new GetExchangeRates().getSpecificRateConversion("CNY", "GTQ");
+////        new GetExchangeRates().getHistoricExchangeRate("DOP", "2020-10-01", "2020-10-04");
+////        new CurrencyDatabase().getCurrenciesNames();
 //    }
 
 //    public void getAllCurrencies () {
@@ -74,6 +64,16 @@ public class GetExchangeRates {
 //        }
 //    }
 
+    public void returnConversion() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Welcome to the Currency Converter");
+        System.out.print("What currency are you converting from: ");
+        String toCurrency = scanner.next();
+        System.out.print("What currency are you converting to: ");
+        String fromCurrency = scanner.next();
+        new GetExchangeRates().getSpecificRateConversion(toCurrency.toUpperCase(Locale.ROOT), fromCurrency.toUpperCase(Locale.ROOT));
+    }
+
     public void getCurrentRates() {
         try {
             String url = "https://freecurrencyapi.net/api/v2/latest?apikey=603b4bc0-9bf0-11ec-9e49-a14cf50a4ccb";
@@ -119,48 +119,33 @@ public class GetExchangeRates {
                     response.append(readLine);
                 }
                 inputSteam.close();
-//                String responseNew = response.substring(response.toString().indexOf(currency));
 
-                System.out.println(fromCurrency + " => " + toCurrency);
-//                System.out.println(response.substring(response.toString().indexOf(fromCurrency)));
-//                List<String> stringAllOfValues = Arrays.asList(response
-//                                                        .substring(response.toString().indexOf("JPY"))
-//                                                        .replaceAll("[{}\"]", "")
-//                                                        .split(","));
+//                System.out.println(fromCurrency + " => " + toCurrency);
 
                 List<String> listOfCurrencies = Arrays.asList(response
-                                            .substring(response.toString().indexOf("JPY"))
-                                            .replaceAll("[{}\"]", "")
-                                            .replaceAll("(:\\d*.\\d*)", "")
-                                            .split(","));
+                        .substring(response.toString().indexOf("JPY"))
+                        .replaceAll("[{}\"]", "")
+                        .replaceAll("(:\\d*.\\d*)", "")
+                        .split(","));
 
-                List<String> listOfValues = Arrays.asList(response
-                                            .substring(response.toString().indexOf("JPY"))
-                                            .replaceAll("[{}\"]", "")
-                                            .replaceAll("(\\w*:)", "")
-                                            .split(","));
+                List<Double> listOfValues = Arrays.stream(response
+                        .substring(response.toString().indexOf("JPY"))
+                        .replaceAll("[{}\"]", "")
+                        .replaceAll("(\\w*:)", "")
+                        .split(",")).map(Double::parseDouble).toList();
 
-                Map<String, String> testMap = new HashMap<String, String>();
+                Map<String, Double> testMap = new HashMap<>();
                 for (int i = 0; i < listOfCurrencies.size(); i++) {
                     testMap.put(listOfCurrencies.get(i), listOfValues.get(i));
                 }
 
-                System.out.println(testMap);
-//                System.out.println(testMap.containsKey(toCurrency));
 
-//                if(toCurrency != testMap.get(toCurrency)) {
-//                    System.out.println(toCurrency + " did not match.");
-//                } else {
-//                    System.out.println(toCurrency + " " + testMap.get(toCurrency));
-//                }
 
-//                if(toCurrency.equals(testMap.get(toCurrency))) {
-//
-//                    System.out.println(testMap.get(toCurrency));
-//
-//                } else {
-//                    System.out.println(toCurrency + " did not match.");
-//                }
+                if (testMap.containsKey(toCurrency)) {
+                    System.out.println("1 " + fromCurrency + " = " + testMap.get(toCurrency) + " " + toCurrency );
+                } else {
+                    System.out.println(toCurrency + " did not match.");
+                }
 
             } else {
                 throw new Exception("Error in API Call");
@@ -196,7 +181,7 @@ public class GetExchangeRates {
                             .replace(",", "\n")
                             .replaceAll("[{}\"]", "");
                 } else {
-                    responseNew = response.toString().substring(response.toString().indexOf("AED"))
+                    responseNew = response.substring(response.toString().indexOf("AED"))
                             .replace(",", "\n")
                             .replaceAll("[{}\"]", "");
                 }
