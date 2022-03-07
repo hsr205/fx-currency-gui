@@ -11,13 +11,6 @@ import java.util.Scanner;
 
 public class GetExchangeRates {
 
-//    public static void main(String[] args) {
-////        new GetExchangeRates().getCurrentRates();
-//        new GetExchangeRates().getSpecificRateConversion("CNY", "GTQ");
-////        new GetExchangeRates().getHistoricExchangeRate("DOP", "2020-10-01", "2020-10-04");
-////        new CurrencyDatabase().getCurrenciesNames();
-//    }
-
 //    public void getAllCurrencies () {
 //        try {
 //            String url = "https://freecurrencyapi.net/api/v2/latest?apikey=603b4bc0-9bf0-11ec-9e49-a14cf50a4ccb";
@@ -64,15 +57,27 @@ public class GetExchangeRates {
 //        }
 //    }
 
-    public void returnConversion() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to the Currency Converter");
-        System.out.print("What currency are you converting from: ");
-        String toCurrency = scanner.next();
-        System.out.print("What currency are you converting to: ");
-        String fromCurrency = scanner.next();
-        new GetExchangeRates().getSpecificRateConversion(toCurrency.toUpperCase(Locale.ROOT), fromCurrency.toUpperCase(Locale.ROOT));
-    }
+//    public void returnConversion() {
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Welcome to the Currency Converter");
+//        System.out.print("What currency are you converting from: ");
+//        String toCurrency = scanner.next();
+//        System.out.print("What currency are you converting to: ");
+//        String fromCurrency = scanner.next();
+//        new GetExchangeRates().getSpecificRateConversion(toCurrency.toUpperCase(Locale.ROOT), fromCurrency.toUpperCase(Locale.ROOT));
+//    }
+//
+//    public void returnHistoricRates() {
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Welcome to Historic Rates");
+//        System.out.print("What currency are you converting from: ");
+//        String toCurrency = scanner.next();
+//        System.out.print("Date From (Ex: YYYY-MM-DD): ");
+//        String dateFrom = scanner.next();
+//        System.out.print("Date To (Ex: YYYY-MM-DD): ");
+//        String dateTo = scanner.next();
+//        new GetExchangeRates().getHistoricExchangeRate(toCurrency.toUpperCase(Locale.ROOT), dateFrom, dateTo);
+//    }
 
     public void getCurrentRates() {
         try {
@@ -140,9 +145,8 @@ public class GetExchangeRates {
                 }
 
 
-
                 if (testMap.containsKey(toCurrency)) {
-                    System.out.println("1 " + fromCurrency + " = " + testMap.get(toCurrency) + " " + toCurrency );
+                    System.out.println("1 " + fromCurrency + " = " + testMap.get(toCurrency) + " " + toCurrency);
                 } else {
                     System.out.println(toCurrency + " did not match.");
                 }
