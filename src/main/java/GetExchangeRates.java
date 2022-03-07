@@ -1,17 +1,20 @@
+import com.opencsv.CSVWriter;
+
 import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 
 public class GetExchangeRates {
 
-//    public void getAllCurrencies () {
+//    public void getCurrentRates() {
 //        try {
 //            String url = "https://freecurrencyapi.net/api/v2/latest?apikey=603b4bc0-9bf0-11ec-9e49-a14cf50a4ccb";
 //            String readLine = null;
@@ -21,34 +24,16 @@ public class GetExchangeRates {
 //
 //            if (responseCode == HttpURLConnection.HTTP_OK) {
 //                BufferedReader inputStream = new BufferedReader(new InputStreamReader(conection.getInputStream()));
-//                StringBuffer response = new StringBuffer();
+//                StringBuilder response = new StringBuilder();
 //                while ((readLine = inputStream.readLine()) != null) {
 //                    response.append(readLine);
 //                }
 //                inputStream.close();
-////                List<String> testList = new ArrayList<>(Arrays.asList(response.toString()
-////                                                                      .substring(response.toString().indexOf("JPY"))
-////                                                                      .replaceAll("[{}\"]", "")
-////                                                                      .replaceAll("(:\\d*.\\d*)", "")
-////                                                                      .split(",")));
-//                List<String> testList = new ArrayList<>(Arrays.asList(response.toString()
-//                        .substring(response.toString().indexOf("JPY"))
-//                        .replaceAll("[{}\"]", "")
-////                        .replaceAll("(:\\d*.\\d*)", "")
-//                        .split(",")));
-//
-//
-////                Map<Object, Object> currenciesMap = testList.stream().collect(Collectors.toMap(s -> {
-////                    for(int i =0; i<=testList.size(); i++) {
-////                        s=String.valueOf(i);
-////                    }
-////                    return s;
-////                }
-////                , s -> s));
-////                System.out.println(currenciesMap.values());
-////                System.out.println(testList.stream().count());
-////                testList.forEach(System.out::println);
-//                System.out.println(testList);
+//                String responseNew = response.substring(response.toString().indexOf("JPY"))
+//                        .replace(",", "\n")
+//                        .replaceAll("[{}\"]", "");
+//                System.out.println("1 USD To:");
+//                System.out.println(responseNew);
 //            } else {
 //                throw new Exception("Error in API Call");
 //            }
@@ -57,29 +42,7 @@ public class GetExchangeRates {
 //        }
 //    }
 
-//    public void returnConversion() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Welcome to the Currency Converter");
-//        System.out.print("What currency are you converting from: ");
-//        String toCurrency = scanner.next();
-//        System.out.print("What currency are you converting to: ");
-//        String fromCurrency = scanner.next();
-//        new GetExchangeRates().getSpecificRateConversion(toCurrency.toUpperCase(Locale.ROOT), fromCurrency.toUpperCase(Locale.ROOT));
-//    }
-//
-//    public void returnHistoricRates() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Welcome to Historic Rates");
-//        System.out.print("What currency are you converting from: ");
-//        String toCurrency = scanner.next();
-//        System.out.print("Date From (Ex: YYYY-MM-DD): ");
-//        String dateFrom = scanner.next();
-//        System.out.print("Date To (Ex: YYYY-MM-DD): ");
-//        String dateTo = scanner.next();
-//        new GetExchangeRates().getHistoricExchangeRate(toCurrency.toUpperCase(Locale.ROOT), dateFrom, dateTo);
-//    }
-
-    public void getCurrentRates() {
+    public void getCurrentRates(String filepath) { // Always USD To another currency
         try {
             String url = "https://freecurrencyapi.net/api/v2/latest?apikey=603b4bc0-9bf0-11ec-9e49-a14cf50a4ccb";
             String readLine = null;
@@ -94,11 +57,18 @@ public class GetExchangeRates {
                     response.append(readLine);
                 }
                 inputStream.close();
-                String responseNew = response.substring(response.toString().indexOf("JPY"))
+
+                String[] responseNew = response.substring(response.toString().indexOf("JPY"))
                         .replace(",", "\n")
-                        .replaceAll("[{}\"]", "");
-                System.out.println("USD To:");
-                System.out.println(responseNew);
+                        .replaceAll("[{}\"]", "")
+                        .split(":");
+
+                try (CSVWriter writer = new CSVWriter(new FileWriter(filepath))) {
+                    writer.writeAll(Collections.singleton(responseNew));
+                } catch (IOException e) {
+                    System.out.println("Exception: " + e.getMessage());
+                }
+
             } else {
                 throw new Exception("Error in API Call");
             }
@@ -107,7 +77,7 @@ public class GetExchangeRates {
         }
     }
 
-    public void getSpecificRateConversion(String fromCurrency, String toCurrency) {
+    public String getSpecificRateConversion(String fromCurrency, String toCurrency) {
         try {
             String apikey = "603b4bc0-9bf0-11ec-9e49-a14cf50a4ccb";
             String url = "https://freecurrencyapi.net/api/v2/latest?apikey=" + apikey + "&base_currency=" + fromCurrency;
@@ -146,9 +116,12 @@ public class GetExchangeRates {
 
 
                 if (testMap.containsKey(toCurrency)) {
-                    System.out.println("1 " + fromCurrency + " = " + testMap.get(toCurrency) + " " + toCurrency);
+                    return "1 " + fromCurrency + " = " + testMap.get(toCurrency) + " " + toCurrency;
+//                    System.out.println("1 " + fromCurrency + " = " + testMap.get(toCurrency) + " " + toCurrency);
                 } else {
-                    System.out.println(toCurrency + " did not match.");
+                    return toCurrency + " did not match.";
+                    //                    System.out.println(toCurrency + " did not match.");
+
                 }
 
             } else {
@@ -157,9 +130,10 @@ public class GetExchangeRates {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return "";
     }
 
-    public void getHistoricExchangeRate(String currency, String fromDate, String toDate) {
+    public void getHistoricExchangeRate(String currency, String fromDate, String toDate, String filePath) {
         try {
             String apikey = "603b4bc0-9bf0-11ec-9e49-a14cf50a4ccb";
             String url = "https://freecurrencyapi.net/api/v2/historical?apikey=" + apikey +
@@ -179,19 +153,28 @@ public class GetExchangeRates {
                     response.append(readLine);
                 }
                 inputStream.close();
-                String responseNew;
                 if (currency.equals("AED")) {
-                    responseNew = response.substring(response.toString().indexOf(currency, response.toString().indexOf(currency) + 1))
+                    String[] responseNew = response.substring(response.toString().indexOf(currency, response.toString().indexOf(currency) + 1))
                             .replace(",", "\n")
-                            .replaceAll("[{}\"]", "");
+                            .replaceAll("[{}\"]", "")
+                            .split(":");
+                    try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
+                        writer.writeAll(Collections.singleton(responseNew));
+                    } catch (IOException e) {
+                        System.out.println("Exception: " + e.getMessage());
+                    }
                 } else {
-                    responseNew = response.substring(response.toString().indexOf("AED"))
+                    String[] responseNew = response.substring(response.toString().indexOf("AED"))
                             .replace(",", "\n")
-                            .replaceAll("[{}\"]", "");
-                }
-                System.out.println(currency + " To:");
-                System.out.println(responseNew);
+                            .replaceAll("[{}\"]", "")
+                            .split(":");
 
+                    try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
+                        writer.writeAll(Collections.singleton(responseNew));
+                    } catch (IOException e) {
+                        System.out.println("Exception: " + e.getMessage());
+                    }
+                }
 
             } else {
                 throw new Exception("Error in API Call");

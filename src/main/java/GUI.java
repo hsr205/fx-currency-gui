@@ -32,35 +32,27 @@ public class GUI implements ActionListener {
         panel.add(toCurrency);
 
         JLabel fromHistoricCurrencyLabel = new JLabel("Convert From Historic Currency: ");
-        fromHistoricCurrencyLabel.setBounds(10, 200, 220, 25);
+        fromHistoricCurrencyLabel.setBounds(10, 125, 220, 25);
         panel.add(fromHistoricCurrencyLabel);
 
         JTextField fromHistoric = new JTextField();
-        fromHistoric.setBounds(220, 200, 165, 25);
+        fromHistoric.setBounds(220, 125, 165, 25);
         panel.add(fromHistoric);
-//
-//        JLabel toHistoricCurrencyLabel = new JLabel("Convert To Historic Currency: ");
-//        toHistoricCurrencyLabel.setBounds(10, 230, 200, 25);
-//        panel.add(toHistoricCurrencyLabel);
-
-//        JTextField toHistoric = new JTextField();
-//        toHistoric.setBounds(220, 200, 165, 25);
-//        panel.add(toHistoric);
 
         JLabel fromDate = new JLabel("From Date (YYYY-MM-DD): ");
-        fromDate.setBounds(10, 230, 200, 25);
+        fromDate.setBounds(10, 160, 200, 25);
         panel.add(fromDate);
 
         JTextField fromDateText = new JTextField();
-        fromDateText.setBounds(220, 230, 165, 25);
+        fromDateText.setBounds(220, 160, 165, 25);
         panel.add(fromDateText);
 
         JLabel toDate = new JLabel("To Date (YYYY-MM-DD): ");
-        toDate.setBounds(10, 260, 200, 25);
+        toDate.setBounds(10, 195, 200, 25);
         panel.add(toDate);
 
         JTextField toDateText = new JTextField();
-        toDateText.setBounds(220, 260, 165, 25);
+        toDateText.setBounds(220, 195, 165, 25);
         panel.add(toDateText);
 
         JButton convertButton = new JButton("Convert");
@@ -69,12 +61,12 @@ public class GUI implements ActionListener {
         panel.add(convertButton);
 
         JButton currentRatesButton = new JButton("Get Current Rates");
-        currentRatesButton.setBounds(10, 120, 150, 25);
+        currentRatesButton.setBounds(10, 340, 150, 25);
         currentRatesButton.addActionListener(this);
         panel.add(currentRatesButton);
 
         JButton historicRatesButton = new JButton("Get Historic Rates");
-        historicRatesButton.setBounds(10, 290, 150, 25);
+        historicRatesButton.setBounds(10, 230, 150, 25);
         historicRatesButton.addActionListener(this);
         panel.add(historicRatesButton);
 
@@ -83,7 +75,10 @@ public class GUI implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 String fromCurrencyText = fromCurrency.getText();
                 String toCurrencyText = toCurrency.getText();
-                new GetExchangeRates().getSpecificRateConversion(fromCurrencyText.toUpperCase(Locale.ROOT), toCurrencyText.toUpperCase(Locale.ROOT));
+
+                JLabel resultString = new JLabel(new GetExchangeRates().getSpecificRateConversion(fromCurrencyText.toUpperCase(Locale.ROOT), toCurrencyText.toUpperCase(Locale.ROOT)));
+                resultString.setBounds(175, 80, 300, 25);
+                panel.add(resultString);
             }
         });
 
@@ -91,7 +86,11 @@ public class GUI implements ActionListener {
         currentRatesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new GetExchangeRates().getCurrentRates();
+
+                JLabel resultString = new JLabel("Output Printed!");
+                resultString.setBounds(175, 340, 300, 25);
+                panel.add(resultString);
+                new GetExchangeRates().getCurrentRates("/Users/HenryRothenberg/Desktop/output.txt");
             }
         });
 
@@ -102,28 +101,23 @@ public class GUI implements ActionListener {
                 String fromHistoricString = fromHistoric.getText();
                 String fromDateString = fromDateText.getText();
                 String toDateString = toDateText.getText();
-                System.out.println(fromHistoricString);
-                System.out.println(fromDateString);
-                System.out.println(toDateString);
 
+                JLabel resultString = new JLabel("Output Printed!");
+                resultString.setBounds(225, 225, 200, 25);
+                panel.add(resultString);
 
                 new GetExchangeRates().getHistoricExchangeRate(fromHistoricString.toUpperCase(Locale.ROOT),
-                                                                fromDateString,
-                                                                toDateString
+                        fromDateString,
+                        toDateString,
+                        "/Users/HenryRothenberg/Desktop/histOutput.csv"
                 );
             }
         });
 
-
         frame.setTitle("Currency Converter");
-
 
         frame.setVisible(true);
 
-    }
-
-    public static void main(String[] args) {
-        new GUI();
     }
 
     @Override
